@@ -7,7 +7,7 @@
 ```sh
 git clone https://github.com/betamaster2/ministra
 
-cd stalker/
+cd ministra/
 
 chmod +x install
 
