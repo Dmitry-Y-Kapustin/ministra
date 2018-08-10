@@ -2,7 +2,7 @@
 
 # Установка обновлений
 echo "Установка обновлений"
-apt-get update && sudo apt-get upgrade -y
+sudo apt-get update && apt-get upgrade -y
 
 # Настройка поддержки языка UTF-8
 export LC_CTYPE=ru_RU.UTF-8
