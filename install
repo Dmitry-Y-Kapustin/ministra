@@ -1,13 +1,14 @@
 #!/bin/bash
 
-#Установка обновлений
+# Установка обновлений
 echo "Установка обновлений"
 apt-get update && sudo apt-get upgrade -y
 
-# Setting for the new UTF-8 terminal support in Lion
-export LC_CTYPE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# Настройка поддержки языка UTF-8
+export LC_CTYPE=ru_RU.UTF-8
+export LC_ALL=ru_RU.UTF-8
 
+# Установка необходимых утилит
 sudo apt-get install -y dialog wget curl nano sudo unzip
 chmod +x ./lab/*
 (
@@ -22,42 +23,36 @@ while [ $c -ne 120 ]
         sleep 1
 done
 ) |
-dialog --title "Installation will begin shortly" --gauge "Please wait ...." 10 60 0
+dialog --title "Начало установки" --gauge "Пожалуйста подождите ...." 10 60 0
 
 
 if [[ $EUID -ne 0 ]]; then
- echo "This script must be run as root" 
+ echo "Этот скрипт должен быть запущен с правами root" 
  exit 1
 else
- cmd=(dialog --separate-output --checklist "Please Select Software you want to install:" 22 76 16)
- options=(1 "Install Ministra Portal" off # any option can be set to default to "on"
- 2 "Install Stalker Portal" off
- 3 "Install Ministra on Ubuntu 16.04" off
- 4 "Exit" off)
+ cmd=(dialog --separate-output --checklist "Пожалуйста выберите версию для установки:" 22 76 16)
+ options=(1 "Установка Ministra Portal для Ubuntu 14.04 LTS" off # any option can be set to default to "on"
+ 2 "Установка Ministra Portal для Ubuntu 16.04 LTS" off
+ 3 "Exit" off)
  choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
  clear
  for choice in $choices
  do
  case $choice in
  1)
- #Install Ministra*
- echo "Installing Ministra"
- ./lab/ministra
+# Установка Ministra Portal для Ubuntu 14.04 LTS
+ echo "Установка Ministra Portal для Ubuntu 14.04 LTS"
+ ./lab/ministra14
 ;;
+
 2)
- #Install Stalker
- echo "Installing Stalker"
-./lab/stalker
+# Установка Ministra Portal для Ubuntu 16.04 LTS
+ echo "Установка Ministra Portal для Ubuntu 16.04 LTS"
+./lab/ministra16
  ;;
 
+# Выход
 3)
- #Install Ubuntu 16.04
- echo "Install Ministra on Ubuntu 16.04"
-./lab/ubuntu16
- ;;
-
- #Exit
-4)
 exit
  ;;
 
