@@ -1,21 +1,6 @@
 #!/bin/bash
 
-# Stalker WM Portal Ministra road warrior installer for Debian, Ubuntu
-
-# This script will work on Debian, Ubuntu and probably other distros
-# of the same families, although no support is offered for them. It isn't
-# bulletproof but it will probably work if you simply want to setup a Stalker WM Portal on
-# your Debian/Ubuntu box. It has been designed to be as unobtrusive and
-# universal as possible.
-
-# This is a free shell script under GNU GPL version 3.0 or above
-# Copyright (C) 2017 s project.
-# Feedback/comment/suggestions : https://linuxhelps.net/
-# Author Ivan Bachvarov a.k.a SlaSerX
-
-
 # Color schema
-
 red='\033[01;31m'
 blue='\033[01;34m'
 green='\033[01;32m'
@@ -28,7 +13,6 @@ CYAN="$(tput setaf 6)"
 NORMAL="$(tput sgr0)"
 
 # smallLoader colors
-
 CSI="\033["
 CEND="${CSI}0m"
 CRED="${CSI}1;31m"
@@ -39,17 +23,16 @@ CCYAN="${CSI}1;36m"
 CBROWN="${CSI}0;33m"
 
 # smallLoader
-
 smallLoader() {
     echo ""
     echo ""
-    echo -ne '[ + + +             ] 3s \r'
+    echo -ne '[ + + +             ] 3c \r'
     sleep 1
-    echo -ne '[ + + + + + +       ] 2s \r'
+    echo -ne '[ + + + + + +       ] 2c \r'
     sleep 1
-    echo -ne '[ + + + + + + + + + ] 1s \r'
+    echo -ne '[ + + + + + + + + + ] 1c \r'
     sleep 1
-    echo -ne '[ + + + + + + + + + ] Press [Enter] to continue... \r'
+    echo -ne '[ + + + + + + + + + ] Нажмите [Enter] для продолжения... \r'
     echo -ne '\n'
 
     read -r
@@ -57,7 +40,7 @@ smallLoader() {
 
 
 
-VER="5.4.0"
+VER="5.4.1"
 PRODUCT="Ministra Portal"
 WEB="http://`ip route get 8.8.8.8 | awk '{print $NF; exit}'`/stalker_portal"
 WAN="`wget -q -O - http://icanhazip.com/ | tail`"
@@ -87,7 +70,7 @@ yesno () {
       n|N|No|NO|no|nO) return 1
       ;;
       *)
-      printf "\n${YELLOW}Please enter ${CYAN}[y]${YELLOW} or ${CYAN}[n]${YELLOW}:${NORMAL} "
+      printf "\n${YELLOW}Пожалуйста нажмите ${CYAN}[y]${YELLOW} or ${CYAN}[n]${YELLOW}:${NORMAL} "
       ;;
     esac
   done
@@ -102,12 +85,11 @@ cat <<EOF
 EOF
 echo "${CYAN}$supported${NORMAL}"
 cat <<EOF
-  If your OS/version/arch is not listed, installation ${RED}will fail${NORMAL}. More
-  details about the systems supported by the script can be found here:
-    ${UNDERLINE}${CYAN}https://github.com/SlaSerX/stalker/blob/master/docs/os-suport${NORMAL}
+  Ваша версия ОС не поддерживается, установка ${RED}НЕВОЗМОЖНА!${NORMAL}. Посмотреть более подробную информацию можете сдесь:
+    ${UNDERLINE}${CYAN}https://github.com/betamaster2/ministra/docs/os-suport${NORMAL}
 EOF
 
-  printf " Continue? (y/n) "
+  printf " Продолжить? (y/n) "
   if ! yesno; then
     exit
   fi
@@ -120,29 +102,29 @@ fi
 
 # 
 
-pass="st@lk3r"
+pass="12345"
 source="http://linuxhelps.net/configs"
 
-#Install Necessary services & packets
+# Установка необходимых сервисов и пакетов
 sudo apt-get install -y -u apache2 nginx wget nano curl nginx-extras unzip memcached php5 php5-mysql php-pear nodejs upstart && sudo pear channel-discover pear.phing.info && sudo pear install -Z phing/phing 
 sleep 1
 
-# Pear
+# Установка Pear
 pear channel-discover pear.phing.info
 pear install -Z phing/phing
 sleep 1
 
-# Install NPM  2.5.11
+# Установка NPM версии 2.5.11
 sudo apt-get -y -u install npm
 sudo npm install -g npm@2.15.11
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 
-# Set the Server Timezone to CST
-echo "Europe/Sofia" > /etc/timezone
+# Установка часовой зоны сервера по CST
+echo "Europe/Kiev" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 
-# Install MySQL Server in a Non-Interactive mode. Default root password will be "st@lk3r"
+# Установка MySQL Server в неинтерактивном режиме. Пароль по-умолчанию для root пользователя "12345"
 echo "mysql-server mysql-server/root_password password $pass" | sudo debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password $pass" | sudo debconf-set-selections
 
@@ -186,18 +168,23 @@ sleep 1
 
 cd /var/www/html/stalker_portal/deploy
 sudo phing
+
+# Установка языка по-умолчанию
+locale-gen ru_RU.utf8
+service apache2 restart
+
 sleep 1
 smallLoader
 
 echo ""
 echo -e "${CCYAN}-----------------------------------------------------------------------${CEND}"
 echo ""
-echo -e "${CCYAN}[ Install Complete Default username is: ${CRED}admin${CEND} ${CCYAN}Default password is: ${CRED}1${CEND} ${CCYAN}: ]${CEND}"
+echo -e "${CCYAN}[ Поздравляем! Установка завершена. Имя пользователя для входа в панель администратора: ${CRED}admin${CEND} ${CCYAN}Пароль: ${CRED}1${CEND} ${CCYAN}: ]${CEND}"
 echo ""
-echo -e "IP WAN       : ${CGREEN}${WAN}${CEND}"
-echo -e "Local IP     : ${CGREEN}${LOCAL}${CEND}"
-echo -e "MySQL Pass   : ${CGREEN}${pass}${CEND}"
-echo -e "WEB          : ${CGREEN}${WEB}${CEND}"
+echo -e "Внешний IP    : ${CGREEN}${WAN}${CEND}"
+echo -e "Локальный IP  : ${CGREEN}${LOCAL}${CEND}"
+echo -e "Пароль MySQL  : ${CGREEN}${pass}${CEND}"
+echo -e "Портал        : ${CGREEN}${WEB}${CEND}"
 echo ""
 echo -e "${CCYAN}-----------------------------------------------------------------------${CEND}"
 echo ""
