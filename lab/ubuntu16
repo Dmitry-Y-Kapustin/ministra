@@ -139,14 +139,6 @@ sudo apt-get -y -u install npm
 sudo npm install -g npm@2.15.11
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
-# Установка часовой зоны сервера
-echo "Europe/Kiev" > /etc/timezone
-dpkg-reconfigure -f noninteractive tzdata
-
-# Синхронизация времени
-apt install ntpdate
-ntpdate ntp.ubuntu.com
-
 # Установка MySQL Server в неинтерактивном режиме. Пароль по-умолчанию для root пользователя "12345"
 echo "mysql-server mysql-server/root_password password $pass" | sudo debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password $pass" | sudo debconf-set-selections
@@ -192,6 +184,14 @@ service apache2 restart
 cd /var/www/html/stalker_portal/deploy
 sudo phing
 sleep 1
+
+# Установка часовой зоны сервера
+dpkg-reconfigure tzdata
+
+# Синхронизация времени
+apt install ntpdate
+ntpdate ntp.ubuntu.com
+
 smallLoader
 
 echo ""
